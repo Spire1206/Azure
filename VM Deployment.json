@@ -31,7 +31,7 @@
     },
     "publicIpName": {
       "type": "string",
-      "defaultValue": "myPublicIP",
+      "defaultValue": "PublicIP-[parameters('vmName')]",
       "metadata": {
         "description": "Name for the Public IP used to access the Virtual Machine."
       }
@@ -125,11 +125,11 @@
   },
   "variables": {
     "storageAccountName": "[format('bootdiags{0}', uniqueString(resourceGroup().id))]",
-    "nicName": "myVMNic",
+    "nicName": "NIC-[parameters('vmName')]",
     "addressPrefix": "10.0.0.0/16",
     "subnetName": "Subnet",
     "subnetPrefix": "10.0.0.0/24",
-    "virtualNetworkName": "MyVNET",
+    "virtualNetworkName": "VNET-AVD",
     "securityProfileJson": {
       "uefiSettings": {
         "secureBootEnabled": true,
@@ -185,12 +185,10 @@
             "name": "[variables('subnetName')]",
             "properties": {
               "addressPrefix": "[variables('subnetPrefix')]"
-
             }
           }
         ]
       }
-
     },
     {
       "type": "Microsoft.Network/networkInterfaces",
@@ -244,14 +242,7 @@
             "managedDisk": {
               "storageAccountType": "StandardSSD_LRS"
             }
-          },
-          "dataDisks": [
-            {
-              "diskSizeGB": 1023,
-              "lun": 0,
-              "createOption": "Empty"
-            }
-          ]
+          }
         },
         "networkProfile": {
           "networkInterfaces": [
