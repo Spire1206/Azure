@@ -17,14 +17,14 @@
     },
     "nicName": {
       "type": "string",
-      "defaultValue": "NIC-[parameters('vmName')]",
+      "defaultValue": "MyNic",
       "metadata": {
         "description": "Name for the Public IP used to access the Virtual Machine."
       }
     },
     "publicIpName": {
       "type": "string",
-      "defaultValue": "PublicIP-[parameters('vmName')]",
+      "defaultValue": "MyPublicIP",
       "metadata": {
         "description": "Name for the Public IP used to access the Virtual Machine."
       }
