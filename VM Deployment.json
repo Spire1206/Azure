@@ -120,6 +120,7 @@
     "storageAccountName": "[format('bootdiags{0}', uniqueString(resourceGroup().id))]",
     "addressPrefix": "10.0.0.0/16",
     "subnetName": "Subnet",
+    "virtualNetworkName":"RG-AVD-vnet",
     "subnetPrefix": "10.0.0.0/24",
     "securityProfileJson": {
       "uefiSettings": {
