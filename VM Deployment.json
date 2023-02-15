@@ -117,7 +117,6 @@
     }
   },
   "variables": {
-    "storageAccountName": "[format('bootdiags{0}', uniqueString(resourceGroup().id))]",
     "addressPrefix": "10.0.0.0/16",
     "subnetName": "Subnet",
     "nicName": "[parameter('nicName')",
@@ -235,8 +234,7 @@
         "securityProfile": "[if(equals(parameters('securityType'), 'TrustedLaunch'), variables('securityProfileJson'), json('null'))]"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]",
-        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+        "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
       ]
     },
     {
