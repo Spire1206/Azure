@@ -163,15 +163,7 @@
           "addressPrefixes": [
             "[variables('addressPrefix')]"
           ]
-        },
-        "subnets": [
-          {
-            "name": "[variables('subnetName')]",
-            "properties": {
-              "addressPrefix": "[variables('subnetPrefix')]"
-            }
-          }
-        ]
+        }
       }
     },
     {
