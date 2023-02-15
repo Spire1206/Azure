@@ -1,13 +1,6 @@
 ﻿{
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
-  "metadata": {
-    "_generator": {
-      "name": "bicep",
-      "version": "0.14.46.61228",
-      "templateHash": "7482195907384114768"
-    }
-  },
   "parameters": {
     "adminUsername": {
       "type": "string",
@@ -27,6 +20,13 @@
       "defaultValue": "[toLower(format('{0}-{1}', parameters('vmName'), uniqueString(resourceGroup().id, parameters('vmName'))))]",
       "metadata": {
         "description": "Unique DNS Name for the Public IP used to access the Virtual Machine."
+      }
+    },
+    "nicName": {
+      "type": "string",
+      "defaultValue": "NIC-[parameters('vmName')]",
+      "metadata": {
+        "description": "Name for the Public IP used to access the Virtual Machine."
       }
     },
     "publicIpName": {
@@ -125,7 +125,6 @@
   },
   "variables": {
     "storageAccountName": "[format('bootdiags{0}', uniqueString(resourceGroup().id))]",
-    "nicName": "NIC-[parameters('vmName')]",
     "addressPrefix": "10.0.0.0/16",
     "subnetName": "Subnet",
     "subnetPrefix": "10.0.0.0/24",
