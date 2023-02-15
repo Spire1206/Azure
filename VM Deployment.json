@@ -122,7 +122,7 @@
     "subnetName": "Subnet",
     "nicName": "[parameter('nicName')",
     "publicIpName": "[parameter('publicIpName')",
-    "virtualNetworkName":"RG-AVD-vnet",
+    "virtualNetworkName": "RG-AVD-vnet",
     "subnetPrefix": "10.0.0.0/24",
     "securityProfileJson": {
       "uefiSettings": {
@@ -231,12 +231,6 @@
               "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
             }
           ]
-        },
-        "diagnosticsProfile": {
-          "bootDiagnostics": {
-            "enabled": true,
-            "storageUri": "[reference(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2022-05-01').primaryEndpoints.blob]"
-          }
         },
         "securityProfile": "[if(equals(parameters('securityType'), 'TrustedLaunch'), variables('securityProfileJson'), json('null'))]"
       },
