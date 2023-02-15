@@ -124,7 +124,7 @@
   },
   "variables": {
     "addressPrefix": "10.0.0.0/16",
-    "subnetName": "default",
+    "subnetName": "subnets/default",
     "virtualNetworkName": "RG-AVD-vnet",
     "subnetPrefix": "10.0.0.0/24",
     "securityProfileJson": {
@@ -181,7 +181,7 @@
                 "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpName'))]"
               },
               "subnet": {
-                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]"
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'), variables('subnetName'))]"
               }
             }
           }
