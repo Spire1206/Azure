@@ -172,7 +172,7 @@
     {
       "type": "Microsoft.Network/networkInterfaces",
       "apiVersion": "2022-05-01",
-      "name": "[variables('nicName')]",
+      "name": "[parameter('nicName')]",
       "location": "[parameters('location')]",
       "properties": {
         "ipConfigurations": [
