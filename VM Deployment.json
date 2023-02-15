@@ -225,6 +225,9 @@
           }
         },
         "networkProfile": {
+          "bootDiagnostics": {
+            "enabled": false
+          },
           "networkInterfaces": [
             {
               "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
