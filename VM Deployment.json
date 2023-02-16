@@ -179,8 +179,10 @@
               "privateIPAllocationMethod": "Dynamic",
               "publicIPAddress": {
                 "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpName'))]"
+              },
+              "subnet": {
+                "id": "/subscriptions/a92b5c76-46fc-440a-80af-57409b6e73da/resourceGroups/RG-AVD/providers/Microsoft.Network/virtualNetworks/RG-AVD-vnet/subnets/default"
               }
-
             }
           }
         ]
