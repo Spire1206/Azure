@@ -124,7 +124,7 @@
   },
   "variables": {
     "addressPrefix": "10.0.0.0/16",
-    "subnetName": "subnets/default",
+    "subnetName": "default",
     "virtualNetworkName": "RG-AVD-vnet",
     "subnetPrefix": "10.0.0.0/24",
     "securityProfileJson": {
