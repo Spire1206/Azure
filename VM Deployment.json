@@ -180,7 +180,7 @@
       {
         "type": "Microsoft.Network/networkSecurityGroups",
         "apiVersion": "2022-05-01",
-        "name": "[variables('networkSecurityGroupName')]",
+        "name": "[parameters('networkSecurityGroupName')]",
         "location": "[parameters('location')]",
         "properties": {
           "securityRules": [
@@ -203,7 +203,7 @@
       {
         "type": "Microsoft.Network/virtualNetworks",
         "apiVersion": "2022-05-01",
-        "name": "[variables('virtualNetworkName')]",
+        "name": "[parameters('virtualNetworkName')]",
         "location": "[parameters('location')]",
         "properties": {
           "addressSpace": {
@@ -230,7 +230,7 @@
       {
         "type": "Microsoft.Network/networkInterfaces",
         "apiVersion": "2022-05-01",
-        "name": "[variables('nicName')]",
+        "name": "[parameters('nicName')]",
         "location": "[parameters('location')]",
         "properties": {
           "ipConfigurations": [
