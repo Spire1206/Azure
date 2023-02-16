@@ -110,6 +110,14 @@
         "description": "Name of the virtual machine."
       }
     },
+
+    "virtualNetworkName": {
+      "RG-AVD-vnet":"string",
+      "defaultValue": "VNet1",
+      "metadata": {
+        "description":"Name of the VNET"
+      }
+  },
     "securityType": {
       "type": "string",
       "defaultValue": "TrustedLaunch",
@@ -125,7 +133,7 @@
   "variables": {
     "addressPrefix": "10.0.0.0/16",
     "subnetName": "default",
-    "virtualNetworkName": "RG-AVD-vnet",
+
     "subnetPrefix": "10.0.0.0/24",
     "securityProfileJson": {
       "uefiSettings": {
@@ -168,7 +176,7 @@
                 "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpName'))]"
               },
               "subnet": {
-                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]"
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('subnetName'))]"
               }
             }
           }
