@@ -113,7 +113,7 @@
     },
     "securityType": {
       "type": "string",
-      "defaultValue": "TrustedLaunch",
+      "defaultValue": "Standard",
       "allowedValues": [
         "Standard",
         "TrustedLaunch"
