@@ -111,7 +111,7 @@
       }
     },
     "virtualNetworkName": {
-      "RG-AVD-vnet": "string",
+      "type": "string",
       "defaultValue": "VNet1",
       "metadata": {
         "description": "Name of the VNET"
