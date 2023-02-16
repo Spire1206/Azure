@@ -4,7 +4,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.14.46.61228"
+      "version": "0.14.46.61228",
+      "templateHash": "7482195907384114768"
     }
   },
   "parameters": {
@@ -21,16 +22,16 @@
         "description": "Password for the Virtual Machine."
       }
     },
-    "nicName": {
+    "dnsLabelPrefix": {
       "type": "string",
-      "defaultValue": "MyNic",
+      "defaultValue": "[toLower(format('{0}-{1}', parameters('vmName'), uniqueString(resourceGroup().id, parameters('vmName'))))]",
       "metadata": {
-        "description": "Name for the Public IP used to access the Virtual Machine."
+        "description": "Unique DNS Name for the Public IP used to access the Virtual Machine."
       }
     },
     "publicIpName": {
       "type": "string",
-      "defaultValue": "MyPublicIP",
+      "defaultValue": "myPublicIP",
       "metadata": {
         "description": "Name for the Public IP used to access the Virtual Machine."
       }
@@ -110,13 +111,6 @@
         "description": "Name of the virtual machine."
       }
     },
-    "virtualNetworkName": {
-      "type": "string",
-      "defaultValue": "VNet1",
-      "metadata": {
-        "description": "Name of the VNET"
-      }
-    },
     "securityType": {
       "type": "string",
       "defaultValue": "TrustedLaunch",
@@ -127,136 +121,213 @@
       "metadata": {
         "description": "Security Type of the Virtual Machine."
       }
-    }
-  },
-  "variables": {
-    "addressPrefix": "10.0.0.0/16",
-    "subnetName": "default",
-    "subnetPrefix": "10.0.0.0/24",
-    "securityProfileJson": {
-      "uefiSettings": {
-        "secureBootEnabled": true,
-        "vTpmEnabled": true
-      },
-      "securityType": "[parameters('securityType')]"
     },
-    "extensionName": "GuestAttestation",
-    "extensionPublisher": "Microsoft.Azure.Security.WindowsAttestation",
-    "extensionVersion": "1.0",
-    "maaTenantName": "GuestAttestation",
-    "maaEndpoint": "[substring('emptyString', 0, 0)]"
-  },
-  "resources": [
-    {
-      "type": "Microsoft.Network/publicIPAddresses",
-      "apiVersion": "2022-05-01",
-      "name": "[parameters('publicIpName')]",
-      "location": "[parameters('location')]",
-      "sku": {
-        "name": "[parameters('publicIpSku')]"
-      },
-      "properties": {
-        "publicIPAllocationMethod": "[parameters('publicIPAllocationMethod')]"
+    "nicName": {
+      "type": "string",
+      "defaultValue": "NiC",
+      "metadata": {
+        "description": "Security Type of the Virtual Machine."
       }
     },
-    {
-      "type": "Microsoft.Network/networkInterfaces",
-      "apiVersion": "2022-05-01",
-      "name": "[parameters('nicName')]",
-      "location": "[parameters('location')]",
-      "properties": {
-        "ipConfigurations": [
-          {
-            "name": "ipconfig1",
-            "properties": {
-              "privateIPAllocationMethod": "Dynamic",
-              "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpName'))]"
-              },
-              "subnet": {
-                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('subnetName'))]"
-              }
-            }
-          }
-        ]
+      "virtualNetworkName": {
+        "type": "string",
+        "defaultValue": "VNET01",
+        "metadata": {
+          "description": "Security Type of the Virtual Machine."
+        }
       },
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpName'))]"
-      ]
+      "networkSecurityGroupName": {
+        "type": "string",
+        "defaultValue": "default-NSG",
+        "metadata": {
+          "description": "Security Type of the Virtual Machine."
+        }
+      }
     },
-    {
-      "type": "Microsoft.Compute/virtualMachines",
-      "apiVersion": "2022-03-01",
-      "name": "[parameters('vmName')]",
-      "location": "[parameters('location')]",
-      "properties": {
-        "hardwareProfile": {
-          "vmSize": "[parameters('vmSize')]"
+    "variables": {
+      "addressPrefix": "10.0.0.0/16",
+      "subnetName": "Default",
+      "subnetPrefix": "10.0.0.0/24",
+      "securityProfileJson": {
+        "uefiSettings": {
+          "secureBootEnabled": true,
+          "vTpmEnabled": true
         },
-        "osProfile": {
-          "computerName": "[parameters('vmName')]",
-          "adminUsername": "[parameters('adminUsername')]",
-          "adminPassword": "[parameters('adminPassword')]"
-        },
-        "storageProfile": {
-          "imageReference": {
-            "publisher": "MicrosoftWindowsServer",
-            "offer": "WindowsServer",
-            "sku": "[parameters('OSVersion')]",
-            "version": "latest"
-          },
-          "osDisk": {
-            "createOption": "FromImage",
-            "managedDisk": {
-              "storageAccountType": "StandardSSD_LRS"
-            }
-          }
-        },
-        "networkProfile": {
-          "bootDiagnostics": {
-            "enabled": false
-          },
-          "networkInterfaces": [
-            {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('nicName'))]"
-            }
-          ]
-        },
-        "securityProfile": "[if(equals(parameters('securityType'), 'TrustedLaunch'), variables('securityProfileJson'), json('null'))]"
+        "securityType": "[parameters('securityType')]"
       },
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/networkInterfaces', parameters('nicName'))]"
-      ]
+      "extensionName": "GuestAttestation",
+      "extensionPublisher": "Microsoft.Azure.Security.WindowsAttestation",
+      "extensionVersion": "1.0",
+      "maaTenantName": "GuestAttestation",
+      "maaEndpoint": "[substring('emptyString', 0, 0)]"
     },
-    {
-      "condition": "[and(equals(parameters('securityType'), 'TrustedLaunch'), and(equals(variables('securityProfileJson').uefiSettings.secureBootEnabled, true()), equals(variables('securityProfileJson').uefiSettings.vTpmEnabled, true())))]",
-      "type": "Microsoft.Compute/virtualMachines/extensions",
-      "apiVersion": "2022-03-01",
-      "name": "[format('{0}/{1}', parameters('vmName'), variables('extensionName'))]",
-      "location": "[parameters('location')]",
-      "properties": {
-        "publisher": "[variables('extensionPublisher')]",
-        "type": "[variables('extensionName')]",
-        "typeHandlerVersion": "[variables('extensionVersion')]",
-        "autoUpgradeMinorVersion": true,
-        "settings": {
-          "AttestationConfig": {
-            "MaaSettings": {
-              "maaEndpoint": "[variables('maaEndpoint')]",
-              "maaTenantName": "[variables('maaTenantName')]"
-            }
+    "resources": [
+      {
+        "type": "Microsoft.Network/publicIPAddresses",
+        "apiVersion": "2022-05-01",
+        "name": "[parameters('publicIpName')]",
+        "location": "[parameters('location')]",
+        "sku": {
+          "name": "[parameters('publicIpSku')]"
+        },
+        "properties": {
+          "publicIPAllocationMethod": "[parameters('publicIPAllocationMethod')]",
+          "dnsSettings": {
+            "domainNameLabel": "[parameters('dnsLabelPrefix')]"
           }
         }
       },
-      "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines', parameters('vmName'))]"
-      ]
-    }
-  ],
-  "outputs": {
-    "hostname": {
-      "type": "string",
-      "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpName')), '2022-05-01').dnsSettings.fqdn]"
+      {
+        "type": "Microsoft.Network/networkSecurityGroups",
+        "apiVersion": "2022-05-01",
+        "name": "[variables('networkSecurityGroupName')]",
+        "location": "[parameters('location')]",
+        "properties": {
+          "securityRules": [
+            {
+              "name": "default-allow-3389",
+              "properties": {
+                "priority": 1000,
+                "access": "Allow",
+                "direction": "Inbound",
+                "destinationPortRange": "3389",
+                "protocol": "Tcp",
+                "sourcePortRange": "*",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "type": "Microsoft.Network/virtualNetworks",
+        "apiVersion": "2022-05-01",
+        "name": "[variables('virtualNetworkName')]",
+        "location": "[parameters('location')]",
+        "properties": {
+          "addressSpace": {
+            "addressPrefixes": [
+              "[variables('addressPrefix')]"
+            ]
+          },
+          "subnets": [
+            {
+              "name": "[variables('subnetName')]",
+              "properties": {
+                "addressPrefix": "[variables('subnetPrefix')]",
+                "networkSecurityGroup": {
+                  "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+                }
+              }
+            }
+          ]
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+        ]
+      },
+      {
+        "type": "Microsoft.Network/networkInterfaces",
+        "apiVersion": "2022-05-01",
+        "name": "[variables('nicName')]",
+        "location": "[parameters('location')]",
+        "properties": {
+          "ipConfigurations": [
+            {
+              "name": "ipconfig1",
+              "properties": {
+                "privateIPAllocationMethod": "Dynamic",
+                "publicIPAddress": {
+                  "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpName'))]"
+                },
+                "subnet": {
+                  "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]"
+                }
+              }
+            }
+          ]
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpName'))]",
+          "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]"
+        ]
+      },
+      {
+        "type": "Microsoft.Compute/virtualMachines",
+        "apiVersion": "2022-03-01",
+        "name": "[parameters('vmName')]",
+        "location": "[parameters('location')]",
+        "properties": {
+          "hardwareProfile": {
+            "vmSize": "[parameters('vmSize')]"
+          },
+          "osProfile": {
+            "computerName": "[parameters('vmName')]",
+            "adminUsername": "[parameters('adminUsername')]",
+            "adminPassword": "[parameters('adminPassword')]"
+          },
+          "storageProfile": {
+            "imageReference": {
+              "publisher": "MicrosoftWindowsServer",
+              "offer": "WindowsServer",
+              "sku": "[parameters('OSVersion')]",
+              "version": "latest"
+            },
+            "osDisk": {
+              "createOption": "FromImage",
+              "managedDisk": {
+                "storageAccountType": "StandardSSD_LRS"
+              }
+            }
+          },
+          "networkProfile": {
+            "networkInterfaces": [
+              {
+                "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
+              }
+            ]
+          },
+          "diagnosticsProfile": {
+            "bootDiagnostics": {
+              "enabled": false
+            }
+          },
+          "securityProfile": "[if(equals(parameters('securityType'), 'TrustedLaunch'), variables('securityProfileJson'), json('null'))]"
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
+        ]
+      },
+      {
+        "condition": "[and(equals(parameters('securityType'), 'TrustedLaunch'), and(equals(variables('securityProfileJson').uefiSettings.secureBootEnabled, true()), equals(variables('securityProfileJson').uefiSettings.vTpmEnabled, true())))]",
+        "type": "Microsoft.Compute/virtualMachines/extensions",
+        "apiVersion": "2022-03-01",
+        "name": "[format('{0}/{1}', parameters('vmName'), variables('extensionName'))]",
+        "location": "[parameters('location')]",
+        "properties": {
+          "publisher": "[variables('extensionPublisher')]",
+          "type": "[variables('extensionName')]",
+          "typeHandlerVersion": "[variables('extensionVersion')]",
+          "autoUpgradeMinorVersion": true,
+          "settings": {
+            "AttestationConfig": {
+              "MaaSettings": {
+                "maaEndpoint": "[variables('maaEndpoint')]",
+                "maaTenantName": "[variables('maaTenantName')]"
+              }
+            }
+          }
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Compute/virtualMachines', parameters('vmName'))]"
+        ]
+      }
+    ],
+    "outputs": {
+      "hostname": {
+        "type": "string",
+        "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIpName')), '2022-05-01').dnsSettings.fqdn]"
+      }
     }
   }
-}
